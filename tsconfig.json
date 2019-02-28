@@ -1,6 +1,6 @@
 {
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./src/**/*.spec.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
+  "exclude": ["./src/**/*.spec.ts", "./src/**/*.spec.tsx"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -9,8 +9,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "lib": ["es2015", "es2017", "dom"],
-    "composite": true,
+    "jsx": "react",
     "noEmitOnError": true,
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

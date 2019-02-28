@@ -5,7 +5,7 @@ module.exports = {
   },
   extends: [
     'plugin:@typescript-eslint/recommended',
-    'airbnb-base',
+    'airbnb',
     'prettier',
     'prettier/@typescript-eslint',
     'plugin:jest/recommended',
@@ -13,19 +13,27 @@ module.exports = {
   globals: {},
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'jest'],
-  rules: {},
+  rules: {
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['test/**', '**/*.spec.{ts,tsx,js,jsx}'] },
+    ],
+    'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'] }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+  },
   overrides: [
     {
       files: ['*.spec.ts'],
       env: {
         'jest/globals': true,
       },
+      rules: {},
     },
   ],
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.ts'],
+        extensions: ['.js', '.ts', '.jsx', '.tsx'],
       },
     },
   },

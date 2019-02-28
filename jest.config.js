@@ -8,4 +8,5 @@ module.exports = {
       diagnostics: false,
     },
   },
+  setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
 };
