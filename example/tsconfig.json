@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "references": [{ "path": "../tsconfig.json" }],
+  "compilerOptions": {
+    "rootDir": "./",
+    "noEmitOnError": false,
+    "noEmit": false
+  },
+  "include": ["./src/index.tsx"]
+}

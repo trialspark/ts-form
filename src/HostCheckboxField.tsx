@@ -1,52 +1,57 @@
 import React, { Component } from 'react';
 import getterToString from '@trialspark/getter-to-string';
 import { DeepRequired } from 'utility-types';
-import { TSFormConfig, BaseHostFieldProvides } from './Types';
+import { BaseHostFieldProvides } from './Types';
 import FormState from './FormState';
 
-export interface TSHostCheckboxFieldProvides {
+export interface TSHostCheckboxFieldProvides<Value> {
   input: BaseHostFieldProvides['input'] & {
     props: {
-      checked: boolean;
+      checked: Value;
     };
   };
 }
 
-export interface TSHostCheckboxFieldProps<FormData extends object> {
-  value: (data: DeepRequired<FormData>) => boolean;
-  children: (provides: TSHostCheckboxFieldProvides) => ReturnType<Component['render']>;
+export interface TSHostCheckboxFieldProps<FormData extends object, Value> {
+  value: (data: DeepRequired<FormData>) => Value;
+  children: <V extends Value>(
+    provides: TSHostCheckboxFieldProvides<V>,
+  ) => ReturnType<Component['render']>;
+  parse?: (value: boolean) => Value;
 }
 
-interface State {
-  checked: boolean;
+interface State<Value> {
+  value: Value;
 }
 
 export default function createHostCheckboxField<FormData extends object>(
-  options: TSFormConfig<FormData>,
   state: FormState<FormData>,
-): new (props: TSHostCheckboxFieldProps<FormData>) => React.Component<
-  TSHostCheckboxFieldProps<FormData>
+): new <Value>(props: TSHostCheckboxFieldProps<FormData, Value>) => React.Component<
+  TSHostCheckboxFieldProps<FormData, Value>
 > {
-  class HostField extends Component<TSHostCheckboxFieldProps<FormData>, State> {
+  class HostField<Value> extends Component<
+    TSHostCheckboxFieldProps<FormData, Value>,
+    State<Value>
+  > {
     private unsubscribe: ReturnType<FormState<FormData>['observe']> | null = null;
 
-    public constructor(props: Readonly<TSHostCheckboxFieldProps<FormData>>) {
+    public constructor(props: Readonly<TSHostCheckboxFieldProps<FormData, Value>>) {
       super(props);
       const { value } = this.props;
 
       this.state = {
-        checked: value(state.values()),
+        value: value(state.values()),
       };
     }
 
-    public state: State;
+    public state: State<Value>;
 
     public componentDidMount() {
       const { value } = this.props;
 
       this.unsubscribe = state.observe(value, newValue =>
         this.setState({
-          checked: newValue,
+          value: newValue,
         }),
       );
     }
@@ -60,15 +65,15 @@ export default function createHostCheckboxField<FormData extends object>(
     private handleChange: NonNullable<
       React.InputHTMLAttributes<HTMLInputElement>['onChange']
     > = event => {
-      const { value } = this.props;
+      const { value, parse = (v: boolean): boolean => v } = this.props;
 
-      state.set(value, event.target.checked);
+      state.set(value, parse(event.target.checked));
     };
 
     public render(): ReturnType<Component['render']> {
       const { children, value } = this.props;
-      const { checked } = this.state;
-      const name = getterToString(options.initialValues)(value);
+      const { value: checked } = this.state;
+      const name = getterToString(state.values())(value);
 
       return children({
         input: {

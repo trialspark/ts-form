@@ -16,10 +16,11 @@ module.exports = {
   rules: {
     'import/no-extraneous-dependencies': [
       'error',
-      { devDependencies: ['test/**', '**/*.spec.{ts,tsx,js,jsx}'] },
+      { devDependencies: ['test/**', '**/*.spec.{ts,tsx,js,jsx}', 'example/**'] },
     ],
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'] }],
     '@typescript-eslint/explicit-function-return-type': 'off',
+    'react/prop-types': 'off',
   },
   overrides: [
     {
